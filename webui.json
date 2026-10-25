@@ -4,7 +4,7 @@
   "pages": [
     {
       "id": "wardrobe",
-      "title": "可可喵的衣柜",
+      "title": "麦麦的衣柜",
       "mode": "custom",
       "entry": "webui/index.html",
       "layout": "document",

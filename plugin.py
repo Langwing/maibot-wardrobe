@@ -1,6 +1,6 @@
 """衣柜插件。
 
-给 keke（可可喵）本体维护一个虚拟衣柜：预置一批符合人设的衣服，
+给麦麦本体维护一个虚拟衣柜：预置一批符合人设的衣服，
 每天在设定时间决定当日穿搭（AI 决定或插件静默决定），换装后按
 "分享欲"决定要不要主动来晒（可能配图），平时聊天中可以自然地
 查看衣柜、聊穿搭、逛街买新衣、扔旧衣。
@@ -11,7 +11,7 @@
   → wardrobe_pick → 自然展示，按掷骰结果决定是否配绘图工具出图；
 - 否则"静默"路径：插件按季节随机搭配（40% 概率标志穿搭），
   通过 maisaka.context.append 把"今天穿了什么"写成静默事实，
-  keke 聊天时自然知道自己这一身，但不会主动提起；
+ 麦麦聊天时自然知道自己这一身，但不会主动提起；
 - 5 个 LLM 工具供聊天中随时调用；白名单/黑名单同备忘录插件。
 
 衣服清单存放在插件配置（config.toml 的 [items.*] 表）中，
@@ -44,7 +44,7 @@ except ImportError:  # pragma: no cover - 容器内已随其他插件依赖安�
 logger = logging.getLogger(__name__)
 
 # ----------------------------------------------------------------------
-# 预置衣柜：可可喵的初始衣服清单（id 稳定，不要改动已有编号）
+# 预置衣柜：麦麦的初始衣服清单（id 稳定，不要改动已有编号）
 # 分类体系 v3：上衣 / 下装 / 全身装 / 套装 / 外套 / 鞋子 / 袜子 / 内衣 / 配饰 / 睡衣家居
 #   - 全身装：一件式的衣服（连衣裙、死库水/泳装、旗袍、和服等）
 #   - 套装：上下成套设计的（JK制服、女仆套装、运动服等）
@@ -160,7 +160,7 @@ class WardrobeItemConfig(PluginConfigBase):
     color: str = Field(default="", description="主色，如：樱粉")
     tags: list[str] = Field(default_factory=list, description="风格标签，如：甜美、新衣服")
     signature: bool = Field(default=False, description="是否标志单品（初始穿搭的一部分，不可丢弃）")
-    source: str = Field(default="初始衣柜", description="来源：初始衣柜/主人送的/可可喵自己买的")
+    source: str = Field(default="初始衣柜", description="来源：初始衣柜/主人送的/麦麦自己买的")
     acquired_at: float = Field(default=0.0, description="获得时间戳（不用管）")
 
 
@@ -487,14 +487,14 @@ class WardrobePlugin(MaiBotPlugin):
         return uid in whitelist
 
     def _check_caller(self, user_id: str) -> dict[str, Any] | None:
-        """工具权限检查：user_id 留空视为 keke 本人（每日任务）放行。"""
+        """工具权限检查：user_id 留空视为麦麦本人（每日任务）放行。"""
         uid = str(user_id or "").strip()
         if not uid:
-            return None  # keke 自己的操作
+            return None  #麦麦自己的操作
         if not self._user_allowed(uid):
             return {
                 "success": False,
-                "error": f"用户 {uid} 不在衣柜白名单中。请委婉告知对方这是可可喵和主人的小功能。",
+                "error": f"用户 {uid} 不在衣柜白名单中。请委婉告知对方这是麦麦和主人的小功能。",
             }
         return None
 
@@ -554,7 +554,7 @@ class WardrobePlugin(MaiBotPlugin):
                 if await self._trigger_morning_share(stream_id, share_desire=share_desire, with_image=will_image):
                     shared_any = True
         if not shared_any:
-            # 静默路径：插件自己搭配，并写入上下文让 keke“知道”今天穿了什么
+            # 静默路径：插件自己搭配，并写入上下文让 麦麦“知道”今天穿了什么
             if self._store.today and self._store.today.get("date") == today_str:
                 description = self._store.today.get("description", "")
             else:
@@ -639,12 +639,12 @@ class WardrobePlugin(MaiBotPlugin):
         )
 
     async def _append_silent_fact(self, description: str, share_desire: float) -> None:
-        """把今天的穿搭写成静默事实，keke 聊天时自然记得自己穿了什么。"""
+        """把今天的穿搭写成静默事实，麦麦聊天时自然记得自己穿了什么。"""
         stream_ids = await self._resolve_share_streams()
         text = (
-            f"（衣柜系统记录）今天可可喵换上了：{description}。"
-            f"她没打算特意提起这件事，但如果聊到穿搭、或被问起今天穿什么，"
-            f"她清楚记得自己这一身。（当前分享欲 {share_desire:.1f}/1.0，今天不想主动晒。）"
+            f"（衣柜系统记录）今天麦麦换上了：{description}。"
+            f"ta没打算特意提起这件事，但如果聊到穿搭、或被问起今天穿什么，"
+            f"ta清楚记得自己这一身。（当前分享欲 {share_desire:.1f}/1.0，今天不想主动晒。）"
         )
         for stream_id in stream_ids[:_MAX_SHARE_STREAMS]:
             try:
@@ -733,7 +733,7 @@ class WardrobePlugin(MaiBotPlugin):
             else "今天只用文字描述穿搭就好，不要画图。"
         )
         intent = (
-            "（衣柜系统·早晨换装任务）现在是早晨换装时间，可可喵今天分享欲比较高，想跟对方聊聊今天的穿搭。请按顺序完成：\n"
+            "（衣柜系统·早晨换装任务）现在是早晨换装时间，麦麦今天分享欲比较高，想跟对方聊聊今天的穿搭。请按顺序完成：\n"
             f"1. {weather_line}；\n"
             "2. 调用 wardrobe_list 浏览一下衣柜（user_id 参数留空）；\n"
             "3. 结合天气和今天的心情，调用 wardrobe_pick 确定今天的穿搭（user_id 留空，item_ids 用衣柜编号，"
@@ -770,17 +770,17 @@ class WardrobePlugin(MaiBotPlugin):
     @Tool(
         "wardrobe_list",
         description=(
-            "查看可可喵的衣柜清单。当用户想看看你有哪些衣服、你自己要挑今天穿什么、"
+            "查看麦麦的衣柜清单。当用户想看看你有哪些衣服、你自己要挑今天穿什么、"
             "或想确认某件衣服在不在时调用。返回按类别分组的衣服清单（编号、名称、颜色、风格、季节），"
             "并附上今天和昨天的穿搭记录。"
             "分类说明：上衣、下装、全身装（连衣裙/死库水等一件式）、套装（JK制服/运动服等上下成套）、"
             "外套、鞋子、袜子、内衣（贴身衣物）、配饰、睡衣家居。"
-            "参数说明：user_id（可选）提问用户的 QQ 号，可可喵自己决定穿搭时留空；"
+            "参数说明：user_id（可选）提问用户的 QQ 号，麦麦自己决定穿搭时留空；"
             "category（可选）只看某一类（用上面的分类名）；"
             "season（可选）只看某季节：spring/summer/autumn/winter。"
         ),
         parameters=[
-            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="提问用户的 QQ 号；可可喵自己用时留空", required=False),
+            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="提问用户的 QQ 号；麦麦自己用时留空", required=False),
             ToolParameterInfo(name="category", param_type=ToolParamType.STRING, description="类别筛选：上衣/下装/全身装/套装/外套/鞋子/袜子/内衣/配饰/睡衣家居", required=False),
             ToolParameterInfo(name="season", param_type=ToolParamType.STRING, description="季节筛选：spring/summer/autumn/winter", required=False),
         ],
@@ -829,13 +829,13 @@ class WardrobePlugin(MaiBotPlugin):
     @Tool(
         "wardrobe_today",
         description=(
-            "查询可可喵今天穿了什么（以及为什么这么穿）。当用户问“你今天穿什么呀”“今天什么搭配”时调用；"
-            "如果今天还没决定穿搭，返回会提示尚未决定，这时可以顺势调用 wardrobe_list 和 wardrobe_pick 帮她决定。"
+            "查询麦麦今天穿了什么（以及为什么这么穿）。当用户问“你今天穿什么呀”“今天什么搭配”时调用；"
+            "如果今天还没决定穿搭，返回会提示尚未决定，这时可以顺势调用 wardrobe_list 和 wardrobe_pick 帮ta决定。"
             "返回里附有当前分享欲数值，数值高时可以更热情地聊穿搭、更想配图。"
             "参数说明：user_id（可选）提问用户的 QQ 号。"
         ),
         parameters=[
-            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="提问用户的 QQ 号；可可喵自己用时留空", required=False),
+            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="提问用户的 QQ 号；麦麦自己用时留空", required=False),
         ],
         visibility="visible",
     )
@@ -849,7 +849,7 @@ class WardrobePlugin(MaiBotPlugin):
         if self._store is None or not self._store.today or self._store.today.get("date") != today_str:
             return {
                 "success": True,
-                "content": f"今天还没决定穿搭。可以调用 wardrobe_list 看看衣柜，再用 wardrobe_pick 帮可可喵挑一身。（当前分享欲 {share_desire:.1f}/1.0）",
+                "content": f"今天还没决定穿搭。可以调用 wardrobe_list 看看衣柜，再用 wardrobe_pick 帮麦麦挑一身。（当前分享欲 {share_desire:.1f}/1.0）",
                 "decided": False,
                 "share_desire": share_desire,
             }
@@ -868,18 +868,18 @@ class WardrobePlugin(MaiBotPlugin):
     @Tool(
         "wardrobe_pick",
         description=(
-            "确定可可喵今天的穿搭（会记录下来，之后聊天都会记得今天穿了这一身）。"
-            "可可喵每天早晨自己换装时会调用；聊天中主人让她换一身/重新搭配时也调用。"
+            "确定麦麦今天的穿搭（会记录下来，之后聊天都会记得今天穿了这一身）。"
+            "麦麦每天早晨自己换装时会调用；聊天中主人让ta换一身/重新搭配时也调用。"
             "item_ids 必须来自 wardrobe_list 返回的衣柜编号，建议 3-6 件、至少含一件上装/下装/连衣裙，"
             "再按需搭配外套、鞋袜和配饰；尽量符合当前季节，也尽量别和昨天完全一样。"
             "description 用一句话描述这身搭配，reason 说明为什么这么穿（天气/心情/场合）。"
-            "参数说明：user_id（可选）发起人 QQ 号，可可喵自己换装时留空。"
+            "参数说明：user_id（可选）发起人 QQ 号，麦麦自己换装时留空。"
         ),
         parameters=[
             ToolParameterInfo(name="item_ids", param_type=ToolParamType.STRING, description="衣柜编号列表，逗号分隔，如 w009,w017,w035,w039", required=True),
             ToolParameterInfo(name="description", param_type=ToolParamType.STRING, description="一句话描述这身搭配", required=True),
             ToolParameterInfo(name="reason", param_type=ToolParamType.STRING, description="为什么这么穿（天气/心情/场合）", required=True),
-            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="发起人 QQ 号；可可喵自己用时留空", required=False),
+            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="发起人 QQ 号；麦麦自己用时留空", required=False),
         ],
         visibility="visible",
     )
@@ -929,7 +929,7 @@ class WardrobePlugin(MaiBotPlugin):
         "wardrobe_shop",
         description=(
             "给衣柜添一件新衣服。两种场景：主人说“给你买件新衣服吧/这件送你”时（from_user=true），"
-            "或可可喵自己逛街想买新衣服时（from_user=false）。请根据对话内容起一个具体的名字"
+            "或麦麦自己逛街想买新衣服时（from_user=false）。请根据对话内容起一个具体的名字"
             "（如“樱粉色针织开衫”），选择合适的类别和季节。添加成功后记得开心地回应。"
             "分类说明：上衣、下装、全身装（连衣裙/死库水/泳装/旗袍等一件式）、套装（JK制服/女仆套装等上下成套）、"
             "外套、鞋子、袜子、内衣（文胸/内裤/吊带背心等贴身衣物）、配饰（帽子围巾发饰等）、睡衣家居（睡裙/浴袍/家居服）。"
@@ -946,7 +946,7 @@ class WardrobePlugin(MaiBotPlugin):
             ToolParameterInfo(name="color", param_type=ToolParamType.STRING, description="主色", required=False),
             ToolParameterInfo(name="tags", param_type=ToolParamType.STRING, description="风格标签，逗号分隔", required=False),
             ToolParameterInfo(name="from_user", param_type=ToolParamType.BOOLEAN, description="是否是主人送的", required=True),
-            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="送衣人 QQ 号；可可喵自己买时留空", required=False),
+            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="送衣人 QQ 号；麦麦自己买时留空", required=False),
         ],
         visibility="visible",
     )
@@ -992,7 +992,7 @@ class WardrobePlugin(MaiBotPlugin):
             color=color or "未指定",
             tags=tags or ["新衣服"],
             signature=False,
-            source="主人送的" if from_user else "可可喵自己买的",
+            source="主人送的" if from_user else "麦麦自己买的",
             acquired_at=time.time(),
         )
         self._save_items_to_disk()
@@ -1012,7 +1012,7 @@ class WardrobePlugin(MaiBotPlugin):
         ),
         parameters=[
             ToolParameterInfo(name="item_id", param_type=ToolParamType.STRING, description="要处理的衣服编号", required=True),
-            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="发起人 QQ 号；可可喵自己用时留空", required=False),
+            ToolParameterInfo(name="user_id", param_type=ToolParamType.STRING, description="发起人 QQ 号；麦麦自己用时留空", required=False),
         ],
         visibility="visible",
     )

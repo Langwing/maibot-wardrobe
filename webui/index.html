@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>可可喵的衣柜</title>
+<title>麦麦的衣柜</title>
 <style>
   :root {
     color-scheme: dark;
@@ -78,7 +78,7 @@
 <body class="maibot-page">
   <div class="toolbar">
     <div>
-      <h1>👗 可可喵的衣柜 <span class="sub">手动维护衣服，保存后立即生效</span></h1>
+      <h1>👗 麦麦的衣柜 <span class="sub">手动维护衣服，保存后立即生效</span></h1>
     </div>
     <button id="refresh">刷新</button>
   </div>
@@ -222,7 +222,7 @@
     const desire = Math.round((STATE.share_desire ?? 0) * 10) / 10;
     box.innerHTML = t
       ? `<span>今天（${esc(t.date)}）穿：</span><b>${esc(t.description)}</b><span class="sub">${esc(t.reason || "")}</span><span class="sub">分享欲 ${desire}/1.0</span>`
-      : `<span class="sub">今天还没决定穿搭（到点后 keke 会自己挑） · 分享欲 ${desire}/1.0（在插件配置里调整）</span>`;
+      : `<span class="sub">今天还没决定穿搭（到点后麦麦会自己挑） · 分享欲 ${desire}/1.0（在插件配置里调整）</span>`;
   }
 
   function renderAddBar() {

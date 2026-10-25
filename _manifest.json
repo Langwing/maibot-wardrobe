@@ -3,7 +3,7 @@
   "id": "local.wardrobe",
   "version": "1.3.0",
   "name": "衣柜 | Wardrobe",
-  "description": "给可可喵本体一个虚拟衣柜：每日按分享欲决定穿搭与晒图，聊天中可查看衣柜、买新衣、聊穿搭，WebUI 专属页面维护衣服。",
+  "description": "给麦麦本体一个虚拟衣柜：每日按分享欲决定穿搭与晒图，聊天中可查看衣柜、买新衣、聊穿搭，WebUI 专属页面维护衣服。",
   "author": {
     "name": "pankai",
     "url": "https://github.com/Langwing"
