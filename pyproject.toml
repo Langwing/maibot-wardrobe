@@ -1,0 +1,11 @@
+[project]
+name = "maibot-wardrobe"
+version = "1.3.0"
+description = "衣柜插件：可可喵的虚拟衣柜，每日穿搭、分享欲晒图、逛街买新衣，WebUI 可维护衣服清单。"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "maibot-plugin-sdk>=2.0.0",
+    "tomlkit>=0.12.0",
+]

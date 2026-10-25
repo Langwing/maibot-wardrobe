@@ -1,0 +1,49 @@
+{
+  "schema_version": 2,
+  "required_capabilities": ["custom_pages", "structured_arguments"],
+  "pages": [
+    {
+      "id": "wardrobe",
+      "title": "可可喵的衣柜",
+      "mode": "custom",
+      "entry": "webui/index.html",
+      "layout": "document",
+      "placement": "sidebar",
+      "queries": {
+        "state": {"api": "wardrobe_page_state"}
+      },
+      "actions": {
+        "set_item": {
+          "api": "wardrobe_page_set_item",
+          "parameters": {
+            "item_id": {"type": "string", "required": true, "max_length": 20},
+            "name": {"type": "string", "required": true, "max_length": 40},
+            "category": {"type": "string", "required": true, "max_length": 20, "choices": ["上衣", "下装", "全身装", "套装", "外套", "鞋子", "袜子", "内衣", "配饰", "睡衣家居"]},
+            "seasons": {"type": "array", "items": {"type": "string", "max_length": 10}},
+            "color": {"type": "string", "max_length": 20},
+            "tags": {"type": "array", "items": {"type": "string", "max_length": 20}},
+            "signature": {"type": "boolean"}
+          }
+        },
+        "add_item": {
+          "api": "wardrobe_page_add_item",
+          "parameters": {
+            "name": {"type": "string", "required": true, "max_length": 40},
+            "category": {"type": "string", "required": true, "max_length": 20, "choices": ["上衣", "下装", "全身装", "套装", "外套", "鞋子", "袜子", "内衣", "配饰", "睡衣家居"]},
+            "seasons": {"type": "array", "items": {"type": "string", "max_length": 10}},
+            "color": {"type": "string", "max_length": 20},
+            "tags": {"type": "array", "items": {"type": "string", "max_length": 20}},
+            "signature": {"type": "boolean"}
+          }
+        },
+        "remove_item": {
+          "api": "wardrobe_page_remove_item",
+          "parameters": {
+            "item_id": {"type": "string", "required": true, "max_length": 20}
+          },
+          "confirmation": "确定把这件衣服从衣柜里移除吗？"
+        }
+      }
+    }
+  ]
+}
