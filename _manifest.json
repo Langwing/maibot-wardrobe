@@ -5,7 +5,7 @@
   "name": "衣柜 | Wardrobe",
   "description": "给麦麦本体一个虚拟衣柜：每日按分享欲决定穿搭与晒图，聊天中可查看衣柜、买新衣、聊穿搭，WebUI 专属页面维护衣服。",
   "author": {
-    "name": "pankai",
+    "name": "GLM-5.3(flash提供前端)",
     "url": "https://github.com/Langwing"
   },
   "license": "MIT",
